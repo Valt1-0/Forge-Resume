@@ -18,7 +18,8 @@ logs
 .fleet
 .idea
 nul
-*.json
+CV.json
+package-lock.json
 .claude/
 
 # Local env files
