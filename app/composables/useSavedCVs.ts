@@ -1,7 +1,9 @@
+import type { CV } from './useCV'
+
 export interface SavedCV {
   id: string
   name: string
-  cv: any
+  cv: CV
   accentColor: string
   templateId: string
   createdAt: string
@@ -18,12 +20,12 @@ export const useSavedCVs = () => {
     try {
       return JSON.parse(saved)
     } catch (error) {
-      console.error('Erreur lors du chargement des CV sauvegardés:', error)
+      console.error('Error loading saved CVs:', error)
       return []
     }
   }
 
-  const saveCV = (name: string, cv: any, accentColor: string, templateId: string): SavedCV => {
+  const saveCV = (name: string, cv: CV, accentColor: string, templateId: string): SavedCV => {
     const cvs = getAllCVs()
     const now = new Date().toISOString()
 
@@ -42,7 +44,7 @@ export const useSavedCVs = () => {
     return newCV
   }
 
-  const updateCV = (id: string, name: string, cv: any, accentColor: string, templateId: string): boolean => {
+  const updateCV = (id: string, name: string, cv: CV, accentColor: string, templateId: string): boolean => {
     const cvs = getAllCVs()
     const index = cvs.findIndex(item => item.id === id)
 
@@ -85,7 +87,7 @@ export const useSavedCVs = () => {
 
     const duplicated: SavedCV = {
       id: Date.now().toString(),
-      name: `${original.name} (copie)`,
+      name: `${original.name} (copy)`,
       cv: JSON.parse(JSON.stringify(original.cv)),
       accentColor: original.accentColor,
       templateId: original.templateId,

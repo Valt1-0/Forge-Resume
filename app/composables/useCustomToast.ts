@@ -10,7 +10,7 @@ export interface Toast {
 const toasts = ref<Toast[]>([])
 let toastId = 0
 
-export const useToast = () => {
+export const useCustomToast = () => {
   const addToast = (message: string, type: Toast['type'] = 'info', duration = 3000) => {
     const id = ++toastId
     const toast: Toast = { id, message, type, duration }

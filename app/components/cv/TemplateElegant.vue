@@ -1,30 +1,30 @@
 <template>
   <div class="flex flex-col h-full w-full bg-white">
-    <!-- En-tête avec photo latérale -->
-    <div class="relative px-16 pt-12 pb-8 border-b-4 border-(--accent-color)">
-      <div class="flex items-start gap-8">
+    <!-- Header with side photo -->
+    <div class="relative px-10 pt-9 pb-5 border-b-4 border-(--accent-color)">
+      <div class="flex items-start gap-6">
         <!-- Photo -->
         <template v-if="cv.showPhoto">
           <div v-if="cv.photo" class="shrink-0">
-            <img :src="cv.photo" alt="Photo" class="w-32 h-32 rounded-2xl object-cover shadow-xl border-4 border-white ring-2 ring-(--accent-color)/20" />
+            <img :src="cv.photo" alt="Photo" class="w-26 h-26 rounded-2xl object-cover shadow-xl border-4 border-white ring-2 ring-(--accent-color)/20" />
           </div>
           <div v-else class="shrink-0">
-            <div class="w-32 h-32 rounded-2xl bg-gray-100 flex items-center justify-center shadow-lg border-4 border-white ring-2 ring-gray-200">
-              <svg class="w-16 h-16 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <div class="w-26 h-26 rounded-2xl bg-gray-100 flex items-center justify-center shadow-lg border-4 border-white ring-2 ring-gray-200">
+              <svg class="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
               </svg>
             </div>
           </div>
         </template>
 
-        <!-- Informations principales -->
+        <!-- Main information -->
         <div class="flex-1">
-          <h1 class="text-5xl font-light text-gray-900 mb-2 tracking-tight">
-            {{ cv.prenom }} <span class="font-semibold">{{ cv.nom }}</span>
+          <h1 class="text-5xl font-light text-gray-900 mb-1.5 tracking-tight">
+            {{ cv.firstName }} <span class="font-semibold">{{ cv.lastName }}</span>
           </h1>
-          <h2 :class="`text-2xl font-light text-(--accent-color) mb-6 italic`">{{ cv.titre }}</h2>
+          <h2 :class="`text-2xl font-light text-(--accent-color) mb-4 italic`">{{ cv.title }}</h2>
 
-          <!-- Contact compact -->
+          <!-- Compact contact -->
           <div class="flex flex-wrap gap-x-6 gap-y-2 text-xs text-gray-600">
             <span v-if="cv.email" class="flex items-center gap-2">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -33,17 +33,17 @@
               </svg>
               {{ cv.email }}
             </span>
-            <span v-if="cv.telephone" class="flex items-center gap-2">
+            <span v-if="cv.phone" class="flex items-center gap-2">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
               </svg>
-              {{ cv.telephone }}
+              {{ cv.phone }}
             </span>
-            <span v-if="cv.localisation" class="flex items-center gap-2">
+            <span v-if="cv.location" class="flex items-center gap-2">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
               </svg>
-              {{ cv.localisation }}
+              {{ cv.location }}
             </span>
             <span v-if="cv.age" class="flex items-center gap-2">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -51,12 +51,11 @@
               </svg>
               {{ cv.age }} ans
             </span>
-            <span v-if="cv.permis" class="flex items-center gap-2">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
-                <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z" />
+            <span v-if="cv.drivingLicense" class="flex items-center gap-2">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M5 11l1.5-4.5h11L19 11m-1.5 5a1.5 1.5 0 0 1-1.5-1.5a1.5 1.5 0 0 1 1.5-1.5a1.5 1.5 0 0 1 1.5 1.5a1.5 1.5 0 0 1-1.5 1.5m-11 0A1.5 1.5 0 0 1 5 14.5A1.5 1.5 0 0 1 6.5 13A1.5 1.5 0 0 1 8 14.5A1.5 1.5 0 0 1 6.5 16M18.92 6c-.2-.58-.76-1-1.42-1h-11c-.66 0-1.22.42-1.42 1L3 12v8a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1h12v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-8l-2.08-6Z"/>
               </svg>
-              Permis B
+              {{ t('personal.license') }}
             </span>
             <span v-if="cv.linkedin" class="flex items-center gap-2">{{ cv.linkedin }}</span>
             <span v-if="cv.website" class="flex items-center gap-2">{{ cv.website }}</span>
@@ -65,104 +64,112 @@
       </div>
     </div>
 
-    <!-- Corps du CV -->
-    <div class="flex-1 px-16 py-8">
-      <!-- À propos -->
-      <div v-if="cv.apropos" class="mb-8">
-        <div class="flex items-center gap-4 mb-4">
-          <div :class="`w-2 h-8 bg-(--accent-color) rounded-full`"></div>
-          <h3 class="text-xl font-light text-gray-900 tracking-wide">Profil</h3>
+    <!-- CV Body -->
+    <div class="flex-1 px-10 py-6">
+      <!-- About -->
+      <div v-if="cv.about" class="mb-6">
+        <div class="flex items-center gap-3 mb-3">
+          <div :class="`w-2 h-7 bg-(--accent-color) rounded-full`"></div>
+          <h3 class="text-xl font-light text-gray-900 tracking-wide">Profile</h3>
         </div>
-        <p class="text-gray-700 leading-relaxed text-sm text-justify pl-6">{{ cv.apropos }}</p>
+        <p class="text-gray-700 leading-relaxed text-sm text-justify pl-5">{{ cv.about }}</p>
       </div>
 
-      <!-- Mise en page 2 colonnes -->
-      <div class="grid grid-cols-[1.5fr_1fr] gap-12">
-        <!-- Colonne principale -->
-        <div class="space-y-8">
-          <!-- Expériences -->
-          <div v-if="cv.experiences.some(e => e.poste)">
-            <div class="flex items-center gap-4 mb-6">
-              <div :class="`w-2 h-8 bg-(--accent-color) rounded-full`"></div>
-              <h3 class="text-xl font-light text-gray-900 tracking-wide">Expérience professionnelle</h3>
+      <!-- 2-column layout -->
+      <div class="grid grid-cols-[1.5fr_1fr] gap-8">
+        <!-- Main column -->
+        <div class="space-y-6">
+          <!-- Experience -->
+          <div v-if="cv.experiences.some(e => e.position)">
+            <div class="flex items-center gap-3 mb-4">
+              <div :class="`w-2 h-7 bg-(--accent-color) rounded-full`"></div>
+              <h3 class="text-xl font-light text-gray-900 tracking-wide">{{ t('experience.title') }}</h3>
             </div>
-            <div class="pl-6 space-y-6">
-              <div v-for="(exp, index) in cv.experiences" :key="index" v-show="exp.poste" class="relative">
-                <div class="flex justify-between items-baseline mb-2">
-                  <h4 class="text-base font-semibold text-gray-900">{{ exp.poste }}</h4>
-                  <span class="text-xs font-medium text-gray-500 whitespace-nowrap ml-4">{{ exp.dateDebut }} - {{ exp.dateFin }}</span>
+            <div class="pl-5 space-y-4">
+              <div v-for="(exp, index) in cv.experiences" :key="index" v-show="exp.position" class="relative">
+                <div class="flex justify-between items-baseline mb-1.5">
+                  <h4 class="text-base font-semibold text-gray-900">{{ exp.position }}</h4>
+                  <span class="text-xs font-medium text-gray-500 whitespace-nowrap ml-4">
+                    <template v-if="exp.startDate && exp.endDate">{{ exp.startDate }} - {{ exp.endDate }}</template>
+                    <template v-else>{{ exp.startDate || exp.endDate }}</template>
+                  </span>
                 </div>
-                <p :class="`text-sm font-medium text-(--accent-color) mb-2`">{{ exp.entreprise }}</p>
-                <p v-if="exp.description" class="text-sm text-gray-600 leading-relaxed text-justify">{{ exp.description }}</p>
+                <div class="flex items-center gap-2 mb-1.5">
+                  <p :class="`text-sm font-medium text-(--accent-color)`">{{ exp.company }}</p>
+                  <span v-if="exp.contractType" class="text-[9px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-medium">
+                    {{ exp.contractType }}
+                  </span>
+                </div>
+                <p v-if="exp.description" class="text-sm text-gray-600 leading-relaxed whitespace-pre-line">{{ exp.description }}</p>
               </div>
             </div>
           </div>
 
-          <!-- Formation -->
-          <div v-if="cv.formations.some(f => f.diplome)">
-            <div class="flex items-center gap-4 mb-6">
-              <div :class="`w-2 h-8 bg-(--accent-color) rounded-full`"></div>
-              <h3 class="text-xl font-light text-gray-900 tracking-wide">Formation</h3>
+          <!-- Education -->
+          <div v-if="cv.education.some(f => f.degree)">
+            <div class="flex items-center gap-3 mb-4">
+              <div :class="`w-2 h-7 bg-(--accent-color) rounded-full`"></div>
+              <h3 class="text-xl font-light text-gray-900 tracking-wide">{{ t('education.title') }}</h3>
             </div>
-            <div class="pl-6 space-y-6">
-              <div v-for="(form, index) in cv.formations" :key="index" v-show="form.diplome">
-                <div class="flex justify-between items-baseline mb-2">
-                  <h4 class="text-base font-semibold text-gray-900">{{ form.diplome }}</h4>
-                  <span class="text-xs font-medium text-gray-500 whitespace-nowrap ml-4">{{ form.annee }}</span>
+            <div class="pl-5 space-y-3.5">
+              <div v-for="(edu, index) in cv.education" :key="index" v-show="edu.degree">
+                <div class="flex justify-between items-baseline mb-1.5">
+                  <h4 class="text-base font-semibold text-gray-900">{{ edu.degree }}</h4>
+                  <span class="text-xs font-medium text-gray-500 whitespace-nowrap ml-4">{{ edu.year }}</span>
                 </div>
-                <p :class="`text-sm font-medium text-(--accent-color) mb-1`">{{ form.ecole }}</p>
-                <p v-if="form.ville" class="text-xs text-gray-500 mb-2 flex items-center gap-1">
+                <p :class="`text-sm font-medium text-(--accent-color) mb-1`">{{ edu.school }}</p>
+                <p v-if="edu.city" class="text-xs text-gray-500 mb-1.5 flex items-center gap-1">
                   <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
                   </svg>
-                  {{ form.ville }}
+                  {{ edu.city }}
                 </p>
-                <p v-if="form.description" class="text-sm text-gray-600 leading-relaxed">{{ form.description }}</p>
+                <p v-if="edu.description" class="text-sm text-gray-600 leading-relaxed whitespace-pre-line">{{ edu.description }}</p>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Colonne latérale -->
-        <div class="space-y-8">
-          <!-- Compétences -->
-          <div v-if="cv.competences">
-            <div class="flex items-center gap-4 mb-4">
+        <!-- Sidebar column -->
+        <div class="space-y-6">
+          <!-- Skills -->
+          <div v-if="cv.skills">
+            <div class="flex items-center gap-3 mb-3">
               <div :class="`w-2 h-6 bg-(--accent-color) rounded-full`"></div>
-              <h3 class="text-lg font-light text-gray-900">Compétences</h3>
+              <h3 class="text-lg font-light text-gray-900">{{ t('skills.title') }}</h3>
             </div>
-            <div class="pl-6 flex flex-col gap-2">
-              <span v-for="(comp, index) in competencesArray" :key="index"
-                    class="text-sm text-gray-700 border-l-2 border-(--accent-color)/30 pl-3 py-1">
+            <div class="pl-5 grid grid-cols-2 gap-1.5">
+              <div v-for="(comp, index) in skillsArray" :key="index"
+                   :class="`text-xs px-2 py-1.5 text-gray-700 font-medium border-l-2 border-(--accent-color)/40 bg-gray-50/50 hover:bg-gray-100/70 transition-colors`">
                 {{ comp }}
-              </span>
+              </div>
             </div>
           </div>
 
-          <!-- Langues -->
-          <div v-if="cv.langues.some(l => l.nom)">
-            <div class="flex items-center gap-4 mb-4">
+          <!-- Languages -->
+          <div v-if="cv.languages.some(l => l.name)">
+            <div class="flex items-center gap-3 mb-3">
               <div :class="`w-2 h-6 bg-(--accent-color) rounded-full`"></div>
-              <h3 class="text-lg font-light text-gray-900">Langues</h3>
+              <h3 class="text-lg font-light text-gray-900">{{ t('languages.title') }}</h3>
             </div>
-            <div class="pl-6 space-y-3">
-              <div v-for="(langue, index) in cv.langues" :key="index" v-show="langue.nom" class="border-l-2 border-(--accent-color)/30 pl-3">
-                <div class="text-sm font-semibold text-gray-900">{{ langue.nom }}</div>
-                <div class="text-xs text-gray-600">{{ langue.niveau }}</div>
+            <div class="pl-5 space-y-2">
+              <div v-for="(lang, index) in cv.languages" :key="index" v-show="lang.name" class="flex justify-between items-baseline border-l-2 border-(--accent-color)/30 pl-3 py-1">
+                <span class="text-sm font-semibold text-gray-900">{{ lang.name }}</span>
+                <span class="text-xs text-gray-600 font-medium">{{ lang.level }}</span>
               </div>
             </div>
           </div>
 
           <!-- Certifications -->
-          <div v-if="cv.certifications && cv.certifications.some(c => c.nom)">
-            <div class="flex items-center gap-4 mb-4">
+          <div v-if="cv.certifications && cv.certifications.some(c => c.name)">
+            <div class="flex items-center gap-3 mb-3">
               <div :class="`w-2 h-6 bg-(--accent-color) rounded-full`"></div>
-              <h3 class="text-lg font-light text-gray-900">Certifications</h3>
+              <h3 class="text-lg font-light text-gray-900">{{ t('personal.certifications') }}</h3>
             </div>
-            <div class="pl-6 space-y-3">
-              <div v-for="(cert, index) in cv.certifications" :key="index" v-show="cert.nom" class="border-l-2 border-(--accent-color)/30 pl-3">
-                <div class="text-sm font-semibold text-gray-900">{{ cert.nom }}</div>
-                <div v-if="cert.annee" class="text-xs text-gray-600">{{ cert.annee }}</div>
+            <div class="pl-5 space-y-2">
+              <div v-for="(cert, index) in cv.certifications" :key="index" v-show="cert.name" class="flex justify-between items-baseline border-l-2 border-(--accent-color)/30 pl-3 py-1">
+                <span class="text-sm font-semibold text-gray-900 flex-1 pr-2 leading-snug">{{ cert.name }}</span>
+                <span v-if="cert.year" class="text-xs text-gray-600 font-medium whitespace-nowrap">{{ cert.year }}</span>
               </div>
             </div>
           </div>
@@ -175,6 +182,9 @@
 <script setup>
 import { computed } from 'vue'
 import { useTemplate } from '~/composables/useTemplate'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   cv: {
@@ -183,6 +193,6 @@ const props = defineProps({
   }
 })
 
-const { parseCompetences } = useTemplate(props.cv)
-const competencesArray = computed(() => parseCompetences(props.cv.competences))
+const { parseSkills } = useTemplate(props.cv)
+const skillsArray = computed(() => parseSkills(props.cv.skills))
 </script>

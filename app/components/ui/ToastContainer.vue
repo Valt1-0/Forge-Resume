@@ -27,9 +27,9 @@
 </template>
 
 <script setup lang="ts">
-import { useToast } from '~/composables/useToast'
+import { useCustomToast } from '~/composables/useCustomToast'
 
-const { toasts, removeToast } = useToast()
+const { toasts, removeToast } = useCustomToast()
 
 const getToastClasses = (type: string) => {
   const classes = {

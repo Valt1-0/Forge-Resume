@@ -1,9 +1,9 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { parseCompetences } from './useCV'
+import { parseSkills } from './useCV'
 
 /**
  * Composable for CV template components
- * Handles accent color caching and competences parsing
+ * Handles accent color caching and skills parsing
  */
 export const useTemplate = (cvRef: any) => {
   // Cache colors to avoid repeated getComputedStyle calls
@@ -61,6 +61,6 @@ export const useTemplate = (cvRef: any) => {
     accentColorDark,
     accentColorLight,
     updateColors,
-    parseCompetences
+    parseSkills
   }
 }

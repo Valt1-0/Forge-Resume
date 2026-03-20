@@ -6,9 +6,9 @@
         <div>
           <h3 class="text-2xl font-bold text-gray-900 flex items-center gap-3">
             <UIcon name="i-heroicons-folder-open" class="w-7 h-7 text-indigo-600" />
-            Mes CV sauvegardés
+            {{ $t('savedCVs.title') }}
           </h3>
-          <p class="text-sm text-gray-600 mt-1">{{ savedCVs.length }} CV enregistré{{ savedCVs.length > 1 ? 's' : '' }}</p>
+          <p class="text-sm text-gray-600 mt-1">{{ savedCVs.length }} saved CV{{ savedCVs.length > 1 ? 's' : '' }}</p>
         </div>
         <button @click="close" class="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-white/50 rounded-lg">
           <UIcon name="i-heroicons-x-mark" class="w-6 h-6" />
@@ -22,10 +22,10 @@
           <div class="w-24 h-24 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mb-6">
             <UIcon name="i-heroicons-document-plus" class="w-12 h-12 text-indigo-600" />
           </div>
-          <h4 class="text-xl font-bold text-gray-900 mb-2">Aucun CV sauvegardé</h4>
-          <p class="text-gray-600 max-w-sm mb-6">Commencez par créer votre CV et sauvegardez-le pour le retrouver facilement plus tard.</p>
+          <h4 class="text-xl font-bold text-gray-900 mb-2">{{ $t('savedCVs.noSaved') }}</h4>
+          <p class="text-gray-600 max-w-sm mb-6">{{ $t('savedCVs.noSavedDescription') }}</p>
           <UButton @click="close" color="indigo" size="lg">
-            Créer mon premier CV
+            {{ $t('toolbar.newCV') }}
           </UButton>
         </div>
 
@@ -42,7 +42,7 @@
                 <div class="flex-1">
                   <h4 class="text-lg font-bold text-gray-900 mb-1 line-clamp-1">{{ savedCV.name }}</h4>
                   <p class="text-xs text-gray-500">
-                    Modifié {{ formatDate(savedCV.updatedAt) }}
+                    Modified {{ formatDate(savedCV.updatedAt) }}
                   </p>
                 </div>
                 <div
@@ -53,13 +53,13 @@
 
               <!-- CV Info -->
               <div class="space-y-2">
-                <div v-if="savedCV.cv.prenom || savedCV.cv.nom" class="flex items-center gap-2 text-sm">
+                <div v-if="savedCV.cv.firstName || savedCV.cv.lastName" class="flex items-center gap-2 text-sm">
                   <UIcon name="i-heroicons-user" class="w-4 h-4 text-gray-400" />
-                  <span class="text-gray-700 font-medium">{{ savedCV.cv.prenom }} {{ savedCV.cv.nom }}</span>
+                  <span class="text-gray-700 font-medium">{{ savedCV.cv.firstName }} {{ savedCV.cv.lastName }}</span>
                 </div>
-                <div v-if="savedCV.cv.titre" class="flex items-center gap-2 text-sm">
+                <div v-if="savedCV.cv.title" class="flex items-center gap-2 text-sm">
                   <UIcon name="i-heroicons-briefcase" class="w-4 h-4 text-gray-400" />
-                  <span class="text-gray-600 line-clamp-1">{{ savedCV.cv.titre }}</span>
+                  <span class="text-gray-600 line-clamp-1">{{ savedCV.cv.title }}</span>
                 </div>
                 <div class="flex items-center gap-2 text-sm">
                   <UIcon name="i-heroicons-document-text" class="w-4 h-4 text-gray-400" />
@@ -77,7 +77,7 @@
                 class="flex-1"
                 icon="i-heroicons-folder-open"
               >
-                Charger
+                {{ $t('savedCVs.load') }}
               </UButton>
               <UButton
                 @click="duplicateCV(savedCV.id)"
@@ -85,7 +85,7 @@
                 variant="soft"
                 size="sm"
                 icon="i-heroicons-document-duplicate"
-                title="Dupliquer"
+                :title="$t('common.duplicate')"
               />
               <UButton
                 @click="confirmDelete(savedCV)"
@@ -93,7 +93,7 @@
                 variant="soft"
                 size="sm"
                 icon="i-heroicons-trash"
-                title="Supprimer"
+                :title="$t('savedCVs.delete')"
               />
             </div>
           </div>
@@ -104,10 +104,10 @@
       <div class="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
         <p class="text-sm text-gray-600">
           <UIcon name="i-heroicons-information-circle" class="w-4 h-4 inline mr-1" />
-          Les CV sont sauvegardés localement dans votre navigateur
+          {{ $t('savedCVs.localStorageInfo') }}
         </p>
         <UButton @click="close" color="gray" variant="ghost">
-          Fermer
+          {{ $t('savedCVs.close') }}
         </UButton>
       </div>
     </div>
@@ -116,7 +116,10 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useSavedCVs, type SavedCV } from '~/composables/useSavedCVs'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   show: boolean
@@ -135,14 +138,14 @@ const refreshCVs = () => {
   savedCVs.value = getAllCVs()
 }
 
-// Rafraîchir la liste quand la modal s'ouvre
+// Refresh the list when the modal opens
 watch(() => props.show, (isShown) => {
   if (isShown) {
     refreshCVs()
   }
 })
 
-// Charger initialement
+// Load initially
 refreshCVs()
 
 const sortedCVs = computed(() => {
@@ -161,15 +164,15 @@ const loadCV = (savedCV: SavedCV) => {
 }
 
 const confirmDelete = (savedCV: SavedCV) => {
-  if (confirm(`Êtes-vous sûr de vouloir supprimer "${savedCV.name}" ?`)) {
+  if (confirm(t('savedCVs.confirmDelete', { name: savedCV.name }))) {
     deleteCVFromStorage(savedCV.id)
-    refreshCVs() // Rafraîchir après suppression
+    refreshCVs() // Refresh after deletion
   }
 }
 
 const duplicateCV = (id: string) => {
   duplicateCVInStorage(id)
-  refreshCVs() // Rafraîchir après duplication
+  refreshCVs() // Refresh after duplication
 }
 
 const getTemplateName = (templateId: string) => {
@@ -186,11 +189,11 @@ const formatDate = (dateString: string) => {
   const hours = Math.floor(diff / 3600000)
   const days = Math.floor(diff / 86400000)
 
-  if (minutes < 1) return 'à l\'instant'
-  if (minutes < 60) return `il y a ${minutes} min`
-  if (hours < 24) return `il y a ${hours}h`
-  if (days < 7) return `il y a ${days}j`
+  if (minutes < 1) return 'just now'
+  if (minutes < 60) return `${minutes} min ago`
+  if (hours < 24) return `${hours}h ago`
+  if (days < 7) return `${days}d ago`
 
-  return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })
+  return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 </script>

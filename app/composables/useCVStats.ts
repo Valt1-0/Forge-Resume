@@ -1,78 +1,20 @@
 import type { Ref } from 'vue'
+import type { CV } from './useCV'
+import { parseSkills } from './useCV'
+import { countWords } from '~/utils/helpers'
 
-export interface CV {
-  photo: string
-  showPhoto?: boolean
-  firstName: string
-  lastName: string
-  title: string
-  about: string
-  age?: string
-  drivingLicense?: boolean
-  email: string
-  phone: string
-  location: string
-  linkedin: string
-  website: string
-  github: string
-  experiences: Array<{
-    position: string
-    company: string
-    contractType?: string
-    startDate: string
-    endDate: string
-    description: string
-  }>
-  education: Array<{
-    degree: string
-    school: string
-    city?: string
-    year: string
-    description: string
-  }>
-  skills: string
-  languages: Array<{
-    name: string
-    level: string
-  }>
-  certifications: Array<{
-    name: string
-    year: string
-  }>
-}
-
-// Utility function to parse skills - can be used standalone
-export const parseSkills = (skills: string): string[] => {
-  if (!skills) return []
-  return skills.split(',').map(s => s.trim()).filter(s => s.length > 0)
-}
-
-export const useCV = () => {
-  const cv = ref<CV>({
-    photo: '',
-    firstName: '',
-    lastName: '',
-    title: '',
-    about: '',
-    email: '',
-    phone: '',
-    location: '',
-    linkedin: '',
-    website: '',
-    github: '',
-    experiences: [{ position: '', company: '', startDate: '', endDate: '', description: '' }],
-    education: [{ degree: '', school: '', year: '', description: '' }],
-    skills: '',
-    languages: [{ name: '', level: 'Intermediate' }],
-    certifications: [{ name: '', year: '' }]
-  })
-
+/**
+ * Composable pour calculer les statistiques d'un CV
+ * Accepte une référence CV externe
+ */
+export const useCVStats = (cv: Ref<CV>) => {
   const skillsArray = computed(() => parseSkills(cv.value.skills))
 
   const completionPercentage = computed(() => {
     let total = 0
     let filled = 0
 
+    // Champs basiques (40 points)
     if (cv.value.firstName) filled += 5
     if (cv.value.lastName) filled += 5
     if (cv.value.title) filled += 5
@@ -83,15 +25,19 @@ export const useCV = () => {
     if (cv.value.photo) filled += 5
     total += 40
 
+    // Expériences (30 points)
     if (cv.value.experiences.some(e => e.position && e.company)) filled += 30
     total += 30
 
+    // Formations (15 points)
     if (cv.value.education.some(f => f.degree && f.school)) filled += 15
     total += 15
 
+    // Compétences (10 points)
     if (cv.value.skills) filled += 10
     total += 10
 
+    // Langues (5 points)
     if (cv.value.languages.some(l => l.name)) filled += 5
     total += 5
 
@@ -108,12 +54,15 @@ export const useCV = () => {
       certificationCount: cv.value.certifications?.filter(c => c.name).length || 0
     }
 
+    // Compter les mots de manière optimisée
     const text = [
-      cv.value.about,
-      ...cv.value.experiences.map(e => e.description),
-      ...cv.value.education.map(f => f.description)
+      cv.value.about || '',
+      ...cv.value.experiences.map(e => e.description || ''),
+      ...cv.value.education.map(f => f.description || '')
     ].join(' ')
-    stats.wordCount = text.split(/\s+/).filter(w => w.length > 0).length
+    stats.wordCount = countWords(text)
+
+    // Calculer les années d'expérience (approximation)
     stats.experienceYears = cv.value.experiences.filter(e => e.position).length * 2.5
 
     return stats
@@ -129,7 +78,6 @@ export const useCV = () => {
   })
 
   return {
-    cv,
     skillsArray,
     completionPercentage,
     cvStats,
