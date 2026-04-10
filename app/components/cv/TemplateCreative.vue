@@ -36,10 +36,15 @@
       </div>
 
       <!-- Skills -->
-      <div v-if="cv.skills" class="mb-8">
+      <div v-if="skillGroups.length" class="mb-8">
         <h3 class="text-2xs font-extrabold tracking-wider mb-4 opacity-90">SKILLS</h3>
-        <div class="flex flex-col gap-2 text-2xs leading-relaxed">
-          <div v-for="(comp, index) in skillsArray" :key="index">• {{ comp }}</div>
+        <div class="space-y-3">
+          <div v-for="group in skillGroups" :key="group.name">
+            <p v-if="group.name" class="text-[9px] font-bold uppercase tracking-wider opacity-60 mb-1">{{ group.name }}</p>
+            <div class="flex flex-col gap-1.5 text-2xs leading-relaxed">
+              <div v-for="(skill, i) in group.skills" :key="i">• {{ skill }}</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -150,6 +155,6 @@ const props = defineProps({
   }
 })
 
-const { parseSkills } = useTemplate(props.cv)
-const skillsArray = computed(() => parseSkills(props.cv.skills))
+const { parseSkillGroups } = useTemplate(props.cv)
+const skillGroups = computed(() => parseSkillGroups(props.cv.skillGroups))
 </script>

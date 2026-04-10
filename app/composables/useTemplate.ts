@@ -1,6 +1,13 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { parseSkills } from './useCV'
 
+export const parseSkillGroups = (skillGroups: any[]): Array<{ name: string; skills: string[] }> => {
+  if (!skillGroups?.length) return []
+  return skillGroups
+    .map(g => ({ name: g.name || '', skills: parseSkills(g.skills || '') }))
+    .filter(g => g.skills.length > 0)
+}
+
 /**
  * Composable for CV template components
  * Handles accent color caching and skills parsing
@@ -61,6 +68,7 @@ export const useTemplate = (cvRef: any) => {
     accentColorDark,
     accentColorLight,
     updateColors,
-    parseSkills
+    parseSkills,
+    parseSkillGroups
   }
 }

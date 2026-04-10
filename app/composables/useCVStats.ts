@@ -1,6 +1,6 @@
 import type { Ref } from 'vue'
 import type { CV } from './useCV'
-import { parseSkills } from './useCV'
+import { getAllSkills } from './useCV'
 import { countWords } from '~/utils/helpers'
 
 /**
@@ -8,7 +8,7 @@ import { countWords } from '~/utils/helpers'
  * Accepte une référence CV externe
  */
 export const useCVStats = (cv: Ref<CV>) => {
-  const skillsArray = computed(() => parseSkills(cv.value.skills))
+  const skillsArray = computed(() => getAllSkills(cv.value.skillGroups))
 
   const completionPercentage = computed(() => {
     let total = 0
@@ -34,7 +34,7 @@ export const useCVStats = (cv: Ref<CV>) => {
     total += 15
 
     // Compétences (10 points)
-    if (cv.value.skills) filled += 10
+    if (cv.value.skillGroups?.some(g => g.skills)) filled += 10
     total += 10
 
     // Langues (5 points)

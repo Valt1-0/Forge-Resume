@@ -136,6 +136,12 @@
             <UIcon name="i-heroicons-document-arrow-down" class="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
             <span class="hidden sm:inline">PDF</span>
           </button>
+          <button @click="exporterATSPDF"
+                  class="flex items-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl text-sm sm:text-base font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all-smooth group whitespace-nowrap"
+                  title="Export ATS-compatible PDF (machine-readable text)">
+            <UIcon name="i-heroicons-shield-check" class="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
+            <span class="hidden sm:inline">ATS</span>
+          </button>
           <button @click="exporterPNG"
                   class="flex items-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl text-sm sm:text-base font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all-smooth group whitespace-nowrap"
                   :title="$t('toolbar.exportPNG')">
@@ -740,52 +746,86 @@
 
             <!-- Skills tab -->
             <div v-if="activeTab === 'skills'">
-              <!-- Technical skills -->
-              <div class="bg-gradient-to-br from-blue-50 to-indigo-50/50 border border-blue-200 rounded-xl p-4 hover:border-indigo-300 transition-all hover:shadow-sm mb-4">
-                <div class="flex items-center justify-between mb-3 pb-2 border-b border-blue-200">
-                  <div class="flex items-center gap-2">
-                    <div class="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <UIcon name="i-heroicons-code-bracket" class="w-3.5 h-3.5 text-blue-600" />
+              <!-- Skill groups -->
+              <div class="space-y-3 mb-3">
+                <div
+                  v-for="(group, groupIndex) in cv.skillGroups"
+                  :key="groupIndex"
+                  class="bg-gradient-to-br from-blue-50 to-indigo-50/50 border border-blue-200 rounded-xl p-4 hover:border-indigo-300 transition-all hover:shadow-sm"
+                >
+                  <!-- Group header -->
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
+                      <UIcon name="i-heroicons-tag" class="w-3.5 h-3.5 text-blue-600" />
                     </div>
-                    <h3 class="text-xs font-bold uppercase tracking-wide text-gray-700">Technical skills</h3>
+                    <UInput
+                      v-model="group.name"
+                      :placeholder="$t('skills.groupNamePlaceholder')"
+                      size="sm"
+                      class="flex-1"
+                      :color="group.name ? 'primary' : 'gray'"
+                    />
+                    <UButton
+                      v-if="cv.skillGroups.length > 1"
+                      @click="removeSkillGroup(groupIndex)"
+                      size="xs"
+                      color="red"
+                      variant="ghost"
+                      icon="i-heroicons-trash"
+                    />
                   </div>
-                </div>
-                <UTextarea
-                  v-model="cv.skills"
-                  label="Your skills"
-                  :hint="`${skillsArray.length} skill(s) • Separate with commas`"
-                  :rows="4"
-                  placeholder="JavaScript, Python, React, Node.js, Docker, MongoDB, PostgreSQL, AWS..."
-                  size="sm"
-                  :color="cv.skills ? 'primary' : 'gray'"
-                />
-                <div v-if="skillsArray.length > 0" class="mt-3 space-y-2">
-                  <div class="flex items-center justify-between text-xs">
-                    <span class="font-medium text-blue-700">{{ skillsArray.length }} skill{{ skillsArray.length > 1 ? 's' : '' }} added</span>
-                    <button
-                      @click="cv.skills = ''"
-                      class="text-red-600 hover:text-red-700 font-medium transition-colors"
-                    >
-                      Clear all
-                    </button>
-                  </div>
-                  <div class="flex flex-wrap gap-1.5">
-                    <span
-                      v-for="(comp, i) in skillsArray"
-                      :key="i"
-                      class="group relative px-2.5 py-1 bg-white border border-blue-200 rounded-full text-xs font-medium text-blue-700 hover:border-blue-400 transition-all hover:shadow-sm"
-                    >
-                      {{ comp }}
+
+                  <!-- Skills textarea -->
+                  <UTextarea
+                    v-model="group.skills"
+                    :hint="`${parseSkills(group.skills).length} skill(s) • separate with commas`"
+                    :rows="3"
+                    placeholder="JavaScript, React, Node.js, Docker..."
+                    size="sm"
+                    :color="group.skills ? 'primary' : 'gray'"
+                  />
+
+                  <!-- Tag preview -->
+                  <div v-if="parseSkills(group.skills).length > 0" class="mt-3 space-y-2">
+                    <div class="flex items-center justify-between text-xs">
+                      <span class="font-medium text-blue-700">{{ parseSkills(group.skills).length }} skill{{ parseSkills(group.skills).length > 1 ? 's' : '' }}</span>
                       <button
-                        @click="removeSkill(comp)"
-                        class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-xs"
+                        @click="group.skills = ''"
+                        class="text-red-600 hover:text-red-700 font-medium transition-colors"
                       >
-                        ×
+                        Clear
                       </button>
-                    </span>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5">
+                      <span
+                        v-for="(skill, i) in parseSkills(group.skills)"
+                        :key="i"
+                        class="group/tag relative px-2.5 py-1 bg-white border border-blue-200 rounded-full text-xs font-medium text-blue-700 hover:border-blue-400 transition-all hover:shadow-sm"
+                      >
+                        {{ skill }}
+                        <button
+                          @click="removeSkill(skill, groupIndex)"
+                          class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full opacity-0 group-hover/tag:opacity-100 transition-opacity flex items-center justify-center text-xs"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
+
+              <!-- Add group button -->
+              <UButton
+                @click="addSkillGroup"
+                size="sm"
+                color="blue"
+                variant="outline"
+                icon="i-heroicons-plus"
+                class="w-full mb-4"
+              >
+                {{ $t('skills.addGroup') }}
+              </UButton>
 
               <!-- Languages -->
               <div class="bg-gradient-to-br from-emerald-50 to-green-50/50 border border-emerald-200 rounded-xl p-3 sm:p-4 hover:border-emerald-300 transition-all hover:shadow-sm mb-3 sm:mb-4">
@@ -916,6 +956,11 @@
                   </div>
                 </div>
               </div>
+            </div>
+
+            <!-- ATS Check tab -->
+            <div v-if="activeTab === 'ats'">
+              <ATSCheckPanel :result="atsResult" />
             </div>
 
           </div>
@@ -1063,7 +1108,7 @@ import { useI18n } from 'vue-i18n'
 import { domToBlob } from 'modern-screenshot'
 import jsPDF from 'jspdf'
 import { isValidEmail, isValidUrl, getColorVariant } from '~/utils/validation'
-import { parseSkills } from '~/composables/useCV'
+import { parseSkills, migrateCV } from '~/composables/useCV'
 import { formatDate, generateFilename, countWords } from '~/utils/helpers'
 import { useCustomToast } from '~/composables/useCustomToast'
 import { useSavedCVs } from '~/composables/useSavedCVs'
@@ -1071,8 +1116,10 @@ import { useTranslatedConstants } from '~/composables/useTranslatedConstants'
 import { useAutoSave } from '~/composables/useAutoSave'
 import { useHistory } from '~/composables/useHistory'
 import { useCVStats } from '~/composables/useCVStats'
+import { useATSCheck } from '~/composables/useATSCheck'
 import SavedCVsModal from '~/components/cv/SavedCVsModal.vue'
 import ToastContainer from '~/components/ui/ToastContainer.vue'
+import ATSCheckPanel from '~/components/cv/ATSCheckPanel.vue'
 
 const { t } = useI18n()
 
@@ -1113,7 +1160,7 @@ const cv = ref({
   github: '',
   experiences: [{ position: '', company: '', contractType: '', startDate: '', endDate: '', description: '' }],
   education: [{ degree: '', school: '', city: '', year: '', description: '' }],
-  skills: '',
+  skillGroups: [{ name: '', skills: '' }],
   languages: [{ name: '', level: 'Intermediate' }],
   certifications: [{ name: '', year: '' }]
 })
@@ -1122,6 +1169,9 @@ const cvPreview = ref(null)
 
 // Initialize CV stats composable
 const { skillsArray, completionPercentage, cvStats, cvInsight } = useCVStats(cv)
+
+// ATS compatibility check
+const { atsResult } = useATSCheck(cv)
 
 // Initialize optimized composables
 const { undo, redo, canUndo, canRedo, reset: resetHistory } = useHistory(cv, {
@@ -1227,9 +1277,18 @@ const supprimerCertification = (index) => {
 // Note: isValidEmail and isValidUrl are now imported from ~/utils/validation
 
 // Gestion des compétences
-const removeSkill = (skillToRemove) => {
-  const skills = skillsArray.value.filter(skill => skill !== skillToRemove)
-  cv.value.skills = skills.join(', ')
+const addSkillGroup = () => {
+  cv.value.skillGroups.push({ name: '', skills: '' })
+}
+
+const removeSkillGroup = (index) => {
+  cv.value.skillGroups.splice(index, 1)
+}
+
+const removeSkill = (skillToRemove, groupIndex) => {
+  const group = cv.value.skillGroups[groupIndex]
+  const skills = parseSkills(group.skills).filter(s => s !== skillToRemove)
+  group.skills = skills.join(', ')
 }
 
 // Zoom
@@ -1302,7 +1361,12 @@ const loadExampleData = () => {
           description: 'General computer science education with focus on object-oriented programming.'
         }
       ],
-      skills: 'JavaScript, TypeScript, Vue.js, React, Node.js, Express, NestJS, MongoDB, PostgreSQL, Redis, Docker, Kubernetes, AWS, CI/CD, Git, Agile, TDD',
+      skillGroups: [
+        { name: 'Frontend', skills: 'JavaScript, TypeScript, Vue.js, React, HTML5, CSS3' },
+        { name: 'Backend', skills: 'Node.js, Express, NestJS, Python, REST, GraphQL' },
+        { name: 'Database & DevOps', skills: 'MongoDB, PostgreSQL, Redis, Docker, Kubernetes, AWS, CI/CD' },
+        { name: 'Methodologies', skills: 'Git, Agile, TDD, Code Review' }
+      ],
       languages: [
         { name: 'English', level: 'Native' },
         { name: 'Spanish', level: 'Fluent (C1)' },
@@ -1338,7 +1402,7 @@ const createNewCV = () => {
       github: '',
       experiences: [{ position: '', company: '', contractType: '', startDate: '', endDate: '', description: '' }],
       education: [{ degree: '', school: '', city: '', year: '', description: '' }],
-      skills: '',
+      skillGroups: [{ name: '', skills: '' }],
       languages: [{ name: '', level: 'Intermediate' }],
       certifications: [{ name: '', year: '' }]
     }
@@ -1367,7 +1431,7 @@ const importJSON = (event) => {
   reader.onload = (e) => {
     try {
       const data = JSON.parse(e.target.result)
-      cv.value = data
+      cv.value = migrateCV(data)
       alert('CV imported successfully!')
     } catch (error) {
       console.error('Import error:', error)
@@ -1434,7 +1498,7 @@ const saveCurrentCV = () => {
 // Load a saved CV
 const loadSavedCV = (savedCV) => {
   try {
-    cv.value = JSON.parse(JSON.stringify(savedCV.cv))
+    cv.value = migrateCV(JSON.parse(JSON.stringify(savedCV.cv)))
     accentColor.value = savedCV.accentColor
     const template = templates.find(t => t.id === savedCV.templateId)
     if (template) {
@@ -1511,6 +1575,440 @@ const exporterPDF = async () => {
   }
 }
 
+// Export ATS PDF — Beautiful rounded design, fully text-based (machine-readable)
+const exporterATSPDF = () => {
+  try {
+    toast.info('⚙️ Generating ATS PDF...')
+
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
+
+    // ── Colour helpers ────────────────────────────────────────────────────────
+    const hexToRgb = (hex) => {
+      const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+      return m ? { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) }
+               : { r: 79, g: 70, b: 229 }
+    }
+    const mix = (a, b, t) => Math.round(a + (b - a) * t)
+    const ac  = hexToRgb(accentColor.value)
+    // Very light tint (pill/chip backgrounds)
+    const acSoft  = { r: mix(ac.r,255,0.90), g: mix(ac.g,255,0.90), b: mix(ac.b,255,0.90) }
+    // Ultra-light (card backgrounds)
+    const acGhost = { r: mix(ac.r,255,0.97), g: mix(ac.g,255,0.97), b: mix(ac.b,255,0.97) }
+
+    // ── Page constants ─────────────────────────────────────────────────────────
+    const pW = 210, pH = 297
+    const mL = 16, mR = 16
+    const bW = pW - mL - mR   // 178 mm
+    const mB = 22
+    let y = 0
+
+    // ── Drawing primitives ─────────────────────────────────────────────────────
+
+    // New page with a thin accent stripe at top
+    const newPage = () => {
+      doc.addPage()
+      doc.setFillColor(ac.r, ac.g, ac.b)
+      doc.rect(0, 0, pW, 2.5, 'F')
+      y = 12
+    }
+    const checkPage = (need = 12) => { if (y + need > pH - mB) newPage() }
+
+    // Thin hairline
+    const hairline = (x1, x2, yy, gray = 210) => {
+      doc.setDrawColor(gray, gray, gray)
+      doc.setLineWidth(0.18)
+      doc.line(x1, yy, x2, yy)
+    }
+
+    // Wrapping body text
+    const bodyText = (text, x, maxW, size = 9, rgb = [80, 80, 80], lh = 5.0) => {
+      if (!text?.trim()) return
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(size)
+      doc.setTextColor(rgb[0], rgb[1], rgb[2])
+      for (const line of doc.splitTextToSize(text.trim(), maxW)) {
+        checkPage(lh + 1)
+        doc.text(line, x, y)
+        y += lh
+      }
+    }
+
+    // Rounded pill chip — draws background + text, returns chip width
+    const chip = (text, x, yy, fgRgb, bgRgb, size = 7.5, padX = 3.5, h = 5.5, r = 2) => {
+      doc.setFontSize(size)
+      const tw  = doc.getTextWidth(text)
+      const cw  = tw + padX * 2
+      doc.setFillColor(bgRgb[0], bgRgb[1], bgRgb[2])
+      doc.roundedRect(x, yy - h + 1.2, cw, h, r, r, 'F')
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(fgRgb[0], fgRgb[1], fgRgb[2])
+      doc.text(text, x + padX, yy)
+      return cw + 2.5   // advance including gap
+    }
+
+    // Section title: bold caps + accent left pill + full-width hairline
+    const sectionHeader = (title) => {
+      checkPage(22)
+      y += 8
+      // Left accent pill (rounded rect, 3 × 8 mm)
+      doc.setFillColor(ac.r, ac.g, ac.b)
+      doc.roundedRect(mL, y - 6.5, 3, 8, 1.5, 1.5, 'F')
+      // Title text
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(10)
+      doc.setTextColor(22, 22, 22)
+      doc.text(title.toUpperCase(), mL + 6, y - 0.5)
+      // Hairline from after title to right margin
+      const titleW = doc.getTextWidth(title.toUpperCase())
+      hairline(mL + 6 + titleW + 4, pW - mR, y - 3)
+      y += 5
+    }
+
+    // ══ HEADER — rounded card floating at top ══════════════════════════════════
+
+    const headerH = 52
+    // Header card extends slightly off left/right edges for full-bleed feel
+    doc.setFillColor(ac.r, ac.g, ac.b)
+    // Flat at top (page edge), rounded at bottom
+    doc.rect(0, 0, pW, headerH - 8, 'F')
+    doc.roundedRect(0, headerH - 16, pW, 16, 10, 10, 'F')
+
+    y = 15
+
+    // First name (normal weight) + Last name (bold)
+    const fn = (cv.value.firstName || '').trim()
+    const ln = (cv.value.lastName || '').trim()
+    if (fn || ln) {
+      doc.setFontSize(28)
+      doc.setTextColor(255, 255, 255)
+      doc.setFont('helvetica', 'normal')
+      const fnW = fn ? doc.getTextWidth(fn + ' ') : 0
+      if (fn) doc.text(fn + ' ', mL, y)
+      doc.setFont('helvetica', 'bold')
+      if (ln) doc.text(ln, mL + fnW, y)
+      y += 9
+    }
+
+    // Job title — italic, semi-transparent white
+    if (cv.value.title) {
+      doc.setFont('helvetica', 'italic')
+      doc.setFontSize(12)
+      doc.setTextColor(235, 235, 255)
+      doc.text(cv.value.title, mL, y)
+      y += 7
+    }
+
+    // Contact strip — small, white/soft
+    const contacts = [
+      cv.value.email, cv.value.phone, cv.value.location,
+      cv.value.linkedin, cv.value.github, cv.value.website
+    ].filter(Boolean)
+    if (contacts.length > 0) {
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(8)
+      doc.setTextColor(220, 220, 245)
+      const cLine = contacts.join('   ·   ')
+      for (const l of doc.splitTextToSize(cLine, bW)) {
+        if (y >= headerH - 2) break
+        doc.text(l, mL, y)
+        y += 4.4
+      }
+    }
+
+    y = headerH + 10
+
+    // ══ PROFILE ════════════════════════════════════════════════════════════════
+    if (cv.value.about?.trim()) {
+      sectionHeader('Profile')
+      // Light ghost card behind summary text
+      const lines = doc.splitTextToSize(cv.value.about.trim(), bW - 8)
+      const cardH  = lines.length * 5.0 + 8
+      doc.setFillColor(acGhost.r, acGhost.g, acGhost.b)
+      doc.roundedRect(mL, y - 2, bW, cardH, 4, 4, 'F')
+      // Accent left border on card
+      doc.setFillColor(ac.r, ac.g, ac.b)
+      doc.roundedRect(mL, y - 2, 2.5, cardH, 1.2, 1.2, 'F')
+      y += 4
+      bodyText(cv.value.about, mL + 7, bW - 8, 9.2, [60, 60, 60], 5.0)
+      y += 5
+    }
+
+    // ══ WORK EXPERIENCE ════════════════════════════════════════════════════════
+    const validExp = cv.value.experiences.filter(e => e.position)
+    if (validExp.length > 0) {
+      sectionHeader('Work Experience')
+
+      for (let i = 0; i < validExp.length; i++) {
+        const exp = validExp[i]
+        checkPage(24)
+
+        // Timeline dot
+        doc.setFillColor(ac.r, ac.g, ac.b)
+        doc.circle(mL + 1.8, y - 1.5, 2, 'F')
+        doc.setFillColor(255, 255, 255)
+        doc.circle(mL + 1.8, y - 1.5, 0.9, 'F')
+        // Vertical timeline line between dots (except last)
+        if (i < validExp.length - 1) {
+          doc.setDrawColor(ac.r, ac.g, ac.b)
+          doc.setLineWidth(0.4)
+          // line will be drawn after we know the y extent — approximate
+        }
+
+        const xBody = mL + 7
+
+        // Position
+        doc.setFont('helvetica', 'bold')
+        doc.setFontSize(10.5)
+        doc.setTextColor(16, 16, 16)
+        doc.text(exp.position, xBody, y)
+
+        // Date chip — right-aligned rounded pill
+        const dateStr = [exp.startDate, exp.endDate].filter(Boolean).join(' – ')
+        if (dateStr) {
+          doc.setFontSize(7.5)
+          const dw  = doc.getTextWidth(dateStr)
+          const cpW = dw + 7
+          const cpX = pW - mR - cpW
+          doc.setFillColor(acSoft.r, acSoft.g, acSoft.b)
+          doc.roundedRect(cpX, y - 4, cpW, 5.5, 2, 2, 'F')
+          doc.setFont('helvetica', 'bold')
+          doc.setTextColor(ac.r, ac.g, ac.b)
+          doc.text(dateStr, cpX + 3.5, y)
+        }
+        y += 5.5
+
+        // Company + contract type chip
+        if (exp.company) {
+          doc.setFont('helvetica', 'normal')
+          doc.setFontSize(9.5)
+          doc.setTextColor(ac.r, ac.g, ac.b)
+          doc.text(exp.company, xBody, y)
+          if (exp.contractType) {
+            const cmpW = doc.getTextWidth(exp.company)
+            chip(exp.contractType, xBody + cmpW + 3, y,
+                 [ac.r, ac.g, ac.b], [acSoft.r, acSoft.g, acSoft.b], 7, 3, 5, 1.8)
+          }
+          y += 5.5
+        }
+
+        // Description
+        if (exp.description?.trim()) {
+          bodyText(exp.description, xBody, bW - 7, 9, [75, 75, 75])
+        }
+
+        if (i < validExp.length - 1) {
+          y += 2
+          hairline(xBody, pW - mR, y, 225)
+          y += 5
+        } else {
+          y += 4
+        }
+      }
+    }
+
+    // ══ EDUCATION ══════════════════════════════════════════════════════════════
+    const validEdu = cv.value.education.filter(e => e.degree)
+    if (validEdu.length > 0) {
+      sectionHeader('Education')
+
+      for (let i = 0; i < validEdu.length; i++) {
+        const edu = validEdu[i]
+        checkPage(20)
+
+        // Graduation cap dot
+        doc.setFillColor(ac.r, ac.g, ac.b)
+        doc.roundedRect(mL, y - 4, 3.5, 3.5, 0.8, 0.8, 'F')
+
+        const xBody = mL + 7
+
+        doc.setFont('helvetica', 'bold')
+        doc.setFontSize(10.5)
+        doc.setTextColor(16, 16, 16)
+        doc.text(edu.degree, xBody, y)
+
+        if (edu.year) {
+          doc.setFontSize(7.5)
+          const yw  = doc.getTextWidth(edu.year)
+          const cpW = yw + 7
+          const cpX = pW - mR - cpW
+          doc.setFillColor(acSoft.r, acSoft.g, acSoft.b)
+          doc.roundedRect(cpX, y - 4, cpW, 5.5, 2, 2, 'F')
+          doc.setFont('helvetica', 'bold')
+          doc.setTextColor(ac.r, ac.g, ac.b)
+          doc.text(edu.year, cpX + 3.5, y)
+        }
+        y += 5.5
+
+        if (edu.school) {
+          doc.setFont('helvetica', 'normal')
+          doc.setFontSize(9.5)
+          doc.setTextColor(ac.r, ac.g, ac.b)
+          doc.text(edu.school, xBody, y)
+          y += 5
+        }
+
+        if (edu.city) {
+          doc.setFont('helvetica', 'normal')
+          doc.setFontSize(8)
+          doc.setTextColor(150, 150, 150)
+          doc.text(edu.city, xBody, y)
+          y += 4.5
+        }
+
+        if (edu.description?.trim()) {
+          bodyText(edu.description, xBody, bW - 7, 9, [75, 75, 75])
+        }
+
+        if (i < validEdu.length - 1) {
+          y += 2
+          hairline(xBody, pW - mR, y, 225)
+          y += 5
+        } else {
+          y += 4
+        }
+      }
+    }
+
+    // ══ SKILLS — grouped pill chips ═════════════════════════════════════════════
+    const skillGroupsPDF = (cv.value.skillGroups || []).filter(g => g.skills && g.skills.trim())
+    if (skillGroupsPDF.length > 0) {
+      sectionHeader('Skills')
+      const gap = 2.5
+      const pillH = 6
+
+      for (const group of skillGroupsPDF) {
+        const groupSkills = group.skills.split(',').map(s => s.trim()).filter(Boolean)
+        if (!groupSkills.length) continue
+
+        // Group name sub-header
+        if (group.name && group.name.trim()) {
+          checkPage(6)
+          doc.setFont('helvetica', 'bold')
+          doc.setFontSize(7.5)
+          doc.setTextColor(ac.r, ac.g, ac.b)
+          doc.text(group.name.toUpperCase(), mL, y)
+          y += 4.5
+        }
+
+        doc.setFontSize(8.5)
+        let xCur = mL
+        checkPage(pillH + 4)
+
+        for (const skill of groupSkills) {
+          const tw = doc.getTextWidth(skill)
+          const pw = tw + 8
+          if (xCur + pw > pW - mR) {
+            xCur = mL
+            y += pillH + gap
+            checkPage(pillH + gap + 2)
+          }
+          doc.setFillColor(acSoft.r, acSoft.g, acSoft.b)
+          doc.roundedRect(xCur, y - pillH + 1.5, pw, pillH, 3, 3, 'F')
+          doc.setFont('helvetica', 'bold')
+          doc.setFontSize(8.5)
+          doc.setTextColor(ac.r, ac.g, ac.b)
+          doc.text(skill, xCur + 4, y)
+          xCur += pw + gap
+        }
+        y += pillH + 5
+      }
+      y += 2
+    }
+
+    // ══ LANGUAGES — rounded chips with level badge ══════════════════════════════
+    const validLangs = cv.value.languages.filter(l => l.name)
+    if (validLangs.length > 0) {
+      sectionHeader('Languages')
+      const gap = 4
+      const rowH = 8
+      let xCur = mL
+      checkPage(rowH + 4)
+
+      for (const lang of validLangs) {
+        doc.setFontSize(8.5)
+        const nameW  = doc.getTextWidth(lang.name)
+        const levelW = lang.level ? doc.getTextWidth(lang.level) : 0
+        const totalW = nameW + (lang.level ? levelW + 14 : 0) + 10
+
+        if (xCur + totalW > pW - mR) {
+          xCur = mL
+          y += rowH + gap
+          checkPage(rowH + gap + 2)
+        }
+
+        // Outer card
+        doc.setFillColor(acGhost.r, acGhost.g, acGhost.b)
+        doc.roundedRect(xCur, y - 5.5, totalW, 7, 3, 3, 'F')
+        // Name
+        doc.setFont('helvetica', 'bold')
+        doc.setFontSize(8.5)
+        doc.setTextColor(25, 25, 25)
+        doc.text(lang.name, xCur + 4, y)
+        // Level badge
+        if (lang.level) {
+          const badgeX = xCur + nameW + 7
+          doc.setFillColor(ac.r, ac.g, ac.b)
+          doc.roundedRect(badgeX, y - 4.5, levelW + 6, 5.5, 2, 2, 'F')
+          doc.setFont('helvetica', 'bold')
+          doc.setFontSize(7.5)
+          doc.setTextColor(255, 255, 255)
+          doc.text(lang.level, badgeX + 3, y)
+        }
+        xCur += totalW + gap
+      }
+      y += rowH + 6
+    }
+
+    // ══ CERTIFICATIONS ══════════════════════════════════════════════════════════
+    const validCerts = (cv.value.certifications || []).filter(c => c.name)
+    if (validCerts.length > 0) {
+      sectionHeader('Certifications')
+      for (const cert of validCerts) {
+        checkPage(9)
+        // Small filled diamond marker
+        doc.setFillColor(ac.r, ac.g, ac.b)
+        doc.roundedRect(mL, y - 3.5, 3, 3, 0.6, 0.6, 'F')
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(9)
+        doc.setTextColor(40, 40, 40)
+        doc.text(cert.name, mL + 6, y)
+        if (cert.year) {
+          const yw = doc.getTextWidth(cert.year)
+          doc.setFillColor(acSoft.r, acSoft.g, acSoft.b)
+          doc.roundedRect(pW - mR - yw - 7, y - 4, yw + 7, 5.5, 2, 2, 'F')
+          doc.setFont('helvetica', 'bold')
+          doc.setFontSize(7.5)
+          doc.setTextColor(ac.r, ac.g, ac.b)
+          doc.text(cert.year, pW - mR - yw - 3.5, y)
+        }
+        y += 8
+      }
+    }
+
+    // ══ FOOTER — accent bar on every page ══════════════════════════════════════
+    const total = doc.getNumberOfPages()
+    for (let p = 1; p <= total; p++) {
+      doc.setPage(p)
+      doc.setFillColor(ac.r, ac.g, ac.b)
+      doc.rect(0, pH - 5, pW, 5, 'F')
+      if (total > 1) {
+        doc.setFont('helvetica', 'bold')
+        doc.setFontSize(8)
+        doc.setTextColor(255, 255, 255)
+        doc.text(`${p} / ${total}`, pW / 2, pH - 1.5, { align: 'center' })
+      }
+    }
+
+    const filename = generateFilename(documentTitle.value, cv.value.firstName, cv.value.lastName, 'pdf')
+      .replace('.pdf', '_ATS.pdf')
+    doc.save(filename)
+    toast.success(`✅ ATS PDF exported: ${filename}`)
+  } catch (err) {
+    console.error('ATS PDF export error:', err)
+    toast.error('❌ ATS PDF export failed.')
+  }
+}
+
 // Export PNG
 const exporterPNG = async () => {
   if (!cvPreview.value) return
@@ -1572,7 +2070,7 @@ const loadFromLocalStorage = () => {
   if (saved) {
     try {
       const data = JSON.parse(saved)
-      cv.value = data.cv
+      cv.value = migrateCV(data.cv)
       documentTitle.value = data.documentTitle || 'My CV'
       accentColor.value = data.accentColor || '#4f46e5'
       selectedTemplate.value = data.selectedTemplate || templates[0]

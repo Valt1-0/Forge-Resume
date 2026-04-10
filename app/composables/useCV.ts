@@ -1,5 +1,10 @@
 import type { Ref } from 'vue'
 
+export interface SkillGroup {
+  name: string
+  skills: string
+}
+
 export interface CV {
   photo: string
   showPhoto?: boolean
@@ -30,7 +35,7 @@ export interface CV {
     year: string
     description: string
   }>
-  skills: string
+  skillGroups: SkillGroup[]
   languages: Array<{
     name: string
     level: string
@@ -45,6 +50,21 @@ export interface CV {
 export const parseSkills = (skills: string): string[] => {
   if (!skills) return []
   return skills.split(',').map(s => s.trim()).filter(s => s.length > 0)
+}
+
+// Get all skills flattened across all groups
+export const getAllSkills = (skillGroups: SkillGroup[] | undefined): string[] => {
+  if (!skillGroups?.length) return []
+  return skillGroups.flatMap(g => parseSkills(g.skills))
+}
+
+// Migrate old format (skills: string) to new format (skillGroups: SkillGroup[])
+export const migrateCV = (data: any): any => {
+  if (!data) return data
+  if (!data.skillGroups) {
+    data.skillGroups = [{ name: '', skills: data.skills || '' }]
+  }
+  return data
 }
 
 export const useCV = () => {
@@ -62,12 +82,12 @@ export const useCV = () => {
     github: '',
     experiences: [{ position: '', company: '', startDate: '', endDate: '', description: '' }],
     education: [{ degree: '', school: '', year: '', description: '' }],
-    skills: '',
+    skillGroups: [{ name: '', skills: '' }],
     languages: [{ name: '', level: 'Intermediate' }],
     certifications: [{ name: '', year: '' }]
   })
 
-  const skillsArray = computed(() => parseSkills(cv.value.skills))
+  const skillsArray = computed(() => getAllSkills(cv.value.skillGroups))
 
   const completionPercentage = computed(() => {
     let total = 0
@@ -89,7 +109,7 @@ export const useCV = () => {
     if (cv.value.education.some(f => f.degree && f.school)) filled += 15
     total += 15
 
-    if (cv.value.skills) filled += 10
+    if (cv.value.skillGroups?.some(g => g.skills)) filled += 10
     total += 10
 
     if (cv.value.languages.some(l => l.name)) filled += 5

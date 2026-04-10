@@ -117,12 +117,17 @@
         <!-- Sidebar column -->
         <div class="space-y-8">
           <!-- Skills -->
-          <div v-if="cv.skills">
+          <div v-if="skillGroups.length">
             <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest mb-4">{{ t('skills.title').toUpperCase() }}</h3>
-            <div class="space-y-2">
-              <div v-for="(comp, index) in skillsArray" :key="index"
-                   :class="`text-xs font-bold text-white bg-(--accent-color) px-3 py-2 uppercase tracking-wide`">
-                {{ comp }}
+            <div class="space-y-3">
+              <div v-for="group in skillGroups" :key="group.name">
+                <p v-if="group.name" class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">{{ group.name }}</p>
+                <div class="flex flex-wrap gap-2">
+                  <div v-for="(skill, i) in group.skills" :key="i"
+                       :class="`text-xs font-bold text-white bg-(--accent-color) px-3 py-2 uppercase tracking-wide`">
+                    {{ skill }}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -168,6 +173,6 @@ const props = defineProps({
   }
 })
 
-const { parseSkills } = useTemplate(props.cv)
-const skillsArray = computed(() => parseSkills(props.cv.skills))
+const { parseSkillGroups } = useTemplate(props.cv)
+const skillGroups = computed(() => parseSkillGroups(props.cv.skillGroups))
 </script>

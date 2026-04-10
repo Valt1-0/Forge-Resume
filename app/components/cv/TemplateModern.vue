@@ -80,13 +80,18 @@
         </div>
 
         <!-- Skills -->
-        <div v-if="cv.skills" class="mb-5">
+        <div v-if="skillGroups.length" class="mb-5">
           <h3 class="text-xs font-black uppercase tracking-widest mb-3 border-b-2 border-white/30 pb-1.5">{{ t('skills.title') }}</h3>
-          <div class="flex flex-wrap gap-1.5">
-            <span v-for="(comp, index) in skillsArray" :key="index"
-                  class="bg-white/20 backdrop-blur-lg px-2 py-1 rounded-full text-[9px] font-semibold border border-white/15">
-              {{ comp }}
-            </span>
+          <div class="space-y-2.5">
+            <div v-for="group in skillGroups" :key="group.name">
+              <p v-if="group.name" class="text-[9px] font-bold uppercase tracking-wider opacity-60 mb-1">{{ group.name }}</p>
+              <div class="flex flex-wrap gap-1.5">
+                <span v-for="(skill, i) in group.skills" :key="i"
+                      class="bg-white/20 backdrop-blur-lg px-2 py-1 rounded-full text-[9px] font-semibold border border-white/15">
+                  {{ skill }}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -210,6 +215,6 @@ const props = defineProps({
   }
 })
 
-const { accentColor, accentColorDark, parseSkills } = useTemplate(props.cv)
-const skillsArray = computed(() => parseSkills(props.cv.skills))
+const { accentColor, accentColorDark, parseSkillGroups } = useTemplate(props.cv)
+const skillGroups = computed(() => parseSkillGroups(props.cv.skillGroups))
 </script>

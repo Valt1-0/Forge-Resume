@@ -30,6 +30,11 @@ export const useTranslatedConstants = () => {
       id: 'languages',
       label: t('tabs.languages'),
       icon: 'i-heroicons-language'
+    },
+    {
+      id: 'ats',
+      label: t('tabs.ats'),
+      icon: 'i-heroicons-shield-check'
     }
   ])
 

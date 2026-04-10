@@ -98,13 +98,18 @@
       <!-- Skills and Languages inline -->
       <div class="grid grid-cols-2 gap-10">
         <!-- Skills -->
-        <div v-if="cv.skills">
+        <div v-if="skillGroups.length">
           <h3 class="text-xs font-bold text-gray-900 mb-4 uppercase tracking-widest">{{ t('skills.title') }}</h3>
-          <div class="flex flex-wrap gap-1.5">
-            <span v-for="(comp, index) in skillsArray" :key="index"
-                  class="bg-gray-100 text-gray-700 px-2.5 py-1.5 text-2xs font-medium">
-              {{ comp }}
-            </span>
+          <div class="space-y-3">
+            <div v-for="group in skillGroups" :key="group.name">
+              <p v-if="group.name" class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">{{ group.name }}</p>
+              <div class="flex flex-wrap gap-1.5">
+                <span v-for="(skill, i) in group.skills" :key="i"
+                      class="bg-gray-100 text-gray-700 px-2.5 py-1.5 text-2xs font-medium">
+                  {{ skill }}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -148,6 +153,6 @@ const props = defineProps({
   }
 })
 
-const { parseSkills } = useTemplate(props.cv)
-const skillsArray = computed(() => parseSkills(props.cv.skills))
+const { parseSkillGroups } = useTemplate(props.cv)
+const skillGroups = computed(() => parseSkillGroups(props.cv.skillGroups))
 </script>

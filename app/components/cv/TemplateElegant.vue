@@ -133,15 +133,20 @@
         <!-- Sidebar column -->
         <div class="space-y-6">
           <!-- Skills -->
-          <div v-if="cv.skills">
+          <div v-if="skillGroups.length">
             <div class="flex items-center gap-3 mb-3">
               <div :class="`w-2 h-6 bg-(--accent-color) rounded-full`"></div>
               <h3 class="text-lg font-light text-gray-900">{{ t('skills.title') }}</h3>
             </div>
-            <div class="pl-5 grid grid-cols-2 gap-1.5">
-              <div v-for="(comp, index) in skillsArray" :key="index"
-                   :class="`text-xs px-2 py-1.5 text-gray-700 font-medium border-l-2 border-(--accent-color)/40 bg-gray-50/50 hover:bg-gray-100/70 transition-colors`">
-                {{ comp }}
+            <div class="pl-5 space-y-3">
+              <div v-for="group in skillGroups" :key="group.name">
+                <p v-if="group.name" class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">{{ group.name }}</p>
+                <div class="grid grid-cols-2 gap-1.5">
+                  <div v-for="(skill, i) in group.skills" :key="i"
+                       :class="`text-xs px-2 py-1.5 text-gray-700 font-medium border-l-2 border-(--accent-color)/40 bg-gray-50/50`">
+                    {{ skill }}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -193,6 +198,6 @@ const props = defineProps({
   }
 })
 
-const { parseSkills } = useTemplate(props.cv)
-const skillsArray = computed(() => parseSkills(props.cv.skills))
+const { parseSkillGroups } = useTemplate(props.cv)
+const skillGroups = computed(() => parseSkillGroups(props.cv.skillGroups))
 </script>

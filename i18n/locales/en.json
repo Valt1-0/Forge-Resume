@@ -41,7 +41,8 @@
     "experience": "Experience",
     "education": "Education",
     "skills": "Skills",
-    "languages": "Languages"
+    "languages": "Languages",
+    "ats": "ATS Score"
   },
   "personal": {
     "title": "Personal Information",
@@ -119,6 +120,9 @@
   "skills": {
     "title": "Skills",
     "addSkill": "Add skill",
+    "addGroup": "Add a category",
+    "groupName": "Category name",
+    "groupNamePlaceholder": "e.g. Frontend, Backend, DevOps...",
     "skillName": "Skill name",
     "skillPlaceholder": "JavaScript",
     "level": "Level",
