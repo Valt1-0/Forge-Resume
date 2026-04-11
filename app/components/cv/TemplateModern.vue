@@ -81,7 +81,10 @@
 
         <!-- Skills -->
         <div v-if="skillGroups.length" class="mb-5">
-          <h3 class="text-xs font-black uppercase tracking-widest mb-3 border-b-2 border-white/30 pb-1.5">{{ t('skills.title') }}</h3>
+          <div class="flex items-center gap-2 mb-3 pb-2 border-b border-white/20">
+            <span class="w-1 h-3.5 bg-white/70 rounded-full shrink-0"></span>
+            <h3 class="text-xs font-black uppercase tracking-widest">{{ t('skills.title') }}</h3>
+          </div>
           <div class="space-y-2.5">
             <div v-for="group in skillGroups" :key="group.name">
               <p v-if="group.name" class="text-[9px] font-bold uppercase tracking-wider opacity-60 mb-1">{{ group.name }}</p>

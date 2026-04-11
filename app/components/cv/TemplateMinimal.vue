@@ -99,7 +99,7 @@
       <div class="grid grid-cols-2 gap-10">
         <!-- Skills -->
         <div v-if="skillGroups.length">
-          <h3 class="text-xs font-bold text-gray-900 mb-4 uppercase tracking-widest">{{ t('skills.title') }}</h3>
+          <h3 class="text-xs font-bold text-gray-900 mb-4 uppercase tracking-widest pb-2 border-b border-gray-200">{{ t('skills.title') }}</h3>
           <div class="space-y-3">
             <div v-for="group in skillGroups" :key="group.name">
               <p v-if="group.name" class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">{{ group.name }}</p>

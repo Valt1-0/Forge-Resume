@@ -37,7 +37,10 @@
 
       <!-- Skills -->
       <div v-if="skillGroups.length" class="mb-8">
-        <h3 class="text-2xs font-extrabold tracking-wider mb-4 opacity-90">SKILLS</h3>
+        <div class="mb-4">
+          <h3 class="text-2xs font-extrabold tracking-wider opacity-90">{{ t('skills.title') }}</h3>
+          <div class="mt-1.5 w-6 h-0.5 bg-white/50 rounded-full"></div>
+        </div>
         <div class="space-y-3">
           <div v-for="group in skillGroups" :key="group.name">
             <p v-if="group.name" class="text-[9px] font-bold uppercase tracking-wider opacity-60 mb-1">{{ group.name }}</p>

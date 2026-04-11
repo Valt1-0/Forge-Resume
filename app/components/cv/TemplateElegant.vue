@@ -131,19 +131,19 @@
         </div>
 
         <!-- Sidebar column -->
-        <div class="space-y-6">
+        <div class="space-y-4">
           <!-- Skills -->
           <div v-if="skillGroups.length">
-            <div class="flex items-center gap-3 mb-3">
+            <div class="flex items-center gap-3 mb-2">
               <div :class="`w-2 h-6 bg-(--accent-color) rounded-full`"></div>
-              <h3 class="text-lg font-light text-gray-900">{{ t('skills.title') }}</h3>
+              <h3 class="text-base font-light text-gray-900">{{ t('skills.title') }}</h3>
             </div>
-            <div class="pl-5 space-y-3">
+            <div class="pl-5 space-y-2">
               <div v-for="group in skillGroups" :key="group.name">
-                <p v-if="group.name" class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">{{ group.name }}</p>
-                <div class="grid grid-cols-2 gap-1.5">
+                <p v-if="group.name" class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{{ group.name }}</p>
+                <div class="grid grid-cols-2 gap-1">
                   <div v-for="(skill, i) in group.skills" :key="i"
-                       :class="`text-xs px-2 py-1.5 text-gray-700 font-medium border-l-2 border-(--accent-color)/40 bg-gray-50/50`">
+                       :class="`text-xs px-2 py-1 text-gray-700 font-medium border-l-2 border-(--accent-color)/40 bg-gray-50/50`">
                     {{ skill }}
                   </div>
                 </div>
@@ -153,12 +153,12 @@
 
           <!-- Languages -->
           <div v-if="cv.languages.some(l => l.name)">
-            <div class="flex items-center gap-3 mb-3">
+            <div class="flex items-center gap-3 mb-2">
               <div :class="`w-2 h-6 bg-(--accent-color) rounded-full`"></div>
-              <h3 class="text-lg font-light text-gray-900">{{ t('languages.title') }}</h3>
+              <h3 class="text-base font-light text-gray-900">{{ t('languages.title') }}</h3>
             </div>
-            <div class="pl-5 space-y-2">
-              <div v-for="(lang, index) in cv.languages" :key="index" v-show="lang.name" class="flex justify-between items-baseline border-l-2 border-(--accent-color)/30 pl-3 py-1">
+            <div class="pl-5 space-y-1">
+              <div v-for="(lang, index) in cv.languages" :key="index" v-show="lang.name" class="flex justify-between items-baseline border-l-2 border-(--accent-color)/30 pl-3 py-0.5">
                 <span class="text-sm font-semibold text-gray-900">{{ lang.name }}</span>
                 <span class="text-xs text-gray-600 font-medium">{{ lang.level }}</span>
               </div>
@@ -167,12 +167,12 @@
 
           <!-- Certifications -->
           <div v-if="cv.certifications && cv.certifications.some(c => c.name)">
-            <div class="flex items-center gap-3 mb-3">
+            <div class="flex items-center gap-3 mb-2">
               <div :class="`w-2 h-6 bg-(--accent-color) rounded-full`"></div>
-              <h3 class="text-lg font-light text-gray-900">{{ t('personal.certifications') }}</h3>
+              <h3 class="text-base font-light text-gray-900">{{ t('personal.certifications') }}</h3>
             </div>
-            <div class="pl-5 space-y-2">
-              <div v-for="(cert, index) in cv.certifications" :key="index" v-show="cert.name" class="flex justify-between items-baseline border-l-2 border-(--accent-color)/30 pl-3 py-1">
+            <div class="pl-5 space-y-1">
+              <div v-for="(cert, index) in cv.certifications" :key="index" v-show="cert.name" class="flex justify-between items-baseline border-l-2 border-(--accent-color)/30 pl-3 py-0.5">
                 <span class="text-sm font-semibold text-gray-900 flex-1 pr-2 leading-snug">{{ cert.name }}</span>
                 <span v-if="cert.year" class="text-xs text-gray-600 font-medium whitespace-nowrap">{{ cert.year }}</span>
               </div>

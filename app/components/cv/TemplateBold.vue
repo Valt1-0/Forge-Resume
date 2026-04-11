@@ -118,7 +118,10 @@
         <div class="space-y-8">
           <!-- Skills -->
           <div v-if="skillGroups.length">
-            <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest mb-4">{{ t('skills.title').toUpperCase() }}</h3>
+            <div class="mb-4">
+              <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest">{{ t('skills.title').toUpperCase() }}</h3>
+              <div :class="`mt-1.5 h-[3px] w-8 bg-(--accent-color) rounded-full`"></div>
+            </div>
             <div class="space-y-3">
               <div v-for="group in skillGroups" :key="group.name">
                 <p v-if="group.name" class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">{{ group.name }}</p>
