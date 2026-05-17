@@ -118,23 +118,6 @@ The project uses TypeScript for type safety. Configuration files:
 4. **Save your work** - Store multiple versions locally
 5. **Export to PDF** - Download your finished CV
 
-## 🌐 Deployment
-
-Check out the [Nuxt deployment documentation](https://nuxt.com/docs/getting-started/deployment) for deployment options:
-
-- Vercel
-- Netlify
-- Cloudflare Pages
-- And more...
-
-## 📄 License
-
-Private project - All rights reserved
-
-## 🤝 Contributing
-
-This is a private project. For questions or issues, please contact the maintainer.
-
 ---
 
 Built with ❤️ using Nuxt 4 and Vue 3
